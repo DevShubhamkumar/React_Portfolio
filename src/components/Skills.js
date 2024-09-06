@@ -1,14 +1,9 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import { useSpring, animated, config } from 'react-spring';
-import { FaReact, FaNodeJs, FaJs, FaHtml5, FaCss3Alt, FaDatabase } from 'react-icons/fa';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import { FaReact, FaNodeJs, FaJs, FaHtml5, FaCss3Alt } from 'react-icons/fa';
 import { SiMongodb, SiExpress, SiBootstrap, SiTailwindcss } from 'react-icons/si';
-
-const float = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-`;
 
 const SkillsSection = styled.section`
   padding: 4rem 0;
@@ -19,7 +14,8 @@ const SkillsSection = styled.section`
 
   @media (min-width: 768px) {
     padding: 6rem 0;
-    margin-left: 250px; // Adjust based on your side navbar width
+      margin-left: 100px;
+
   }
 
   @media (min-width: 1200px) {
@@ -53,7 +49,7 @@ const Container = styled.div`
   }
 `;
 
-const SectionTitle = styled.h2`
+const SectionTitle = styled(motion.h2)`
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: 2rem;
@@ -109,7 +105,7 @@ const SkillsGrid = styled.div`
   }
 `;
 
-const SkillItem = styled(animated.div)`
+const SkillItem = styled(motion.div)`
   background: linear-gradient(135deg, ${({ theme }) => theme.cardBackground}, ${({ theme }) => theme.cardBackgroundLight});
   padding: 2rem 1.5rem;
   border-radius: 20px;
@@ -154,7 +150,6 @@ const SkillIcon = styled.div`
   font-size: 3rem;
   margin-bottom: 1rem;
   color: ${({ theme }) => theme.primary};
-  animation: ${float} 3s ease-in-out infinite;
 
   @media (min-width: 768px) {
     font-size: 4rem;
@@ -212,19 +207,52 @@ const skills = [
 ];
 
 const Skills = () => {
-  const skillProps = useSpring({
-    from: { opacity: 0, transform: 'translateY(30px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
-    config: config.gentle,
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
   });
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 10,
+      },
+    },
+  };
+
   return (
-    <SkillsSection id="skills">
+    <SkillsSection id="skills" ref={ref}>
       <Container>
-        <SectionTitle>My Expertise</SectionTitle>
-        <SkillsGrid>
+        <SectionTitle
+          initial={{ opacity: 0, y: -20 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          My Skills
+        </SectionTitle>
+        <SkillsGrid
+          as={motion.div}
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
           {skills.map((skill, index) => (
-            <SkillItem key={index} style={{...skillProps, delay: index * 100}}>
+            <SkillItem key={index} variants={itemVariants}>
               <SkillIcon as={skill.icon} />
               <SkillName>{skill.name}</SkillName>
               <SkillDescription>{skill.description}</SkillDescription>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useSpring, animated, config } from 'react-spring';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaperPlane } from 'react-icons/fa';
+import emailjs from 'emailjs-com';
 
 const ContactSection = styled.section`
   min-height: 100vh;
@@ -13,7 +14,7 @@ const ContactSection = styled.section`
   padding: 2rem;
 `;
 
-const ContactContainer = styled(animated.div)`
+const ContactContainer = styled(motion.div)`
   max-width: 1000px;
   width: 100%;
   background: linear-gradient(135deg, ${({ theme }) => theme.primary}22, ${({ theme }) => theme.secondary}22);
@@ -22,7 +23,7 @@ const ContactContainer = styled(animated.div)`
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 `;
 
-const Title = styled(animated.h2)`
+const Title = styled(motion.h2)`
   font-size: 3rem;
   color: ${({ theme }) => theme.text};
   margin-bottom: 2rem;
@@ -34,7 +35,7 @@ const ContactForm = styled.form`
   gap: 1.5rem;
 `;
 
-const Input = styled(animated.input)`
+const Input = styled(motion.input)`
   width: 100%;
   padding: 1rem;
   border: 2px solid ${({ theme }) => theme.border};
@@ -51,7 +52,7 @@ const Input = styled(animated.input)`
   }
 `;
 
-const TextArea = styled(animated.textarea)`
+const TextArea = styled(motion.textarea)`
   width: 100%;
   padding: 1rem;
   border: 2px solid ${({ theme }) => theme.border};
@@ -70,7 +71,7 @@ const TextArea = styled(animated.textarea)`
   }
 `;
 
-const SubmitButton = styled(animated.button)`
+const SubmitButton = styled(motion.button)`
   padding: 1rem 2rem;
   border: none;
   border-radius: 50px;
@@ -90,6 +91,17 @@ const SubmitButton = styled(animated.button)`
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
 `;
+const Toast = styled(motion.div)`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: ${({ theme }) => theme.success || '#4CAF50'};
+  color: white;
+  padding: 16px;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+`;
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -97,80 +109,102 @@ const Contact = () => {
     email: '',
     message: '',
   });
+  const [showToast, setShowToast] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Add your form submission logic here
+    try {
+      await emailjs.send(
+        'YOUR_SERVICE_ID',
+        'YOUR_TEMPLATE_ID',
+        {
+          ...formData,
+          to_email: 'ashubhammagotra@gmail.com',
+        },
+        'YOUR_USER_ID'
+      );
+      console.log('Email sent successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
   };
-
-  const containerProps = useSpring({
-    from: { opacity: 0, transform: 'translateY(50px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
-    config: config.gentle,
-  });
-
-  const titleProps = useSpring({
-    from: { opacity: 0, transform: 'translateY(-30px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
-    delay: 300,
-    config: config.wobbly,
-  });
-
-  const inputProps = useSpring({
-    from: { opacity: 0, transform: 'translateX(-30px)' },
-    to: { opacity: 1, transform: 'translateX(0)' },
-    delay: 600,
-    config: config.gentle,
-  });
-
-  const buttonProps = useSpring({
-    from: { opacity: 0, transform: 'scale(0.8)' },
-    to: { opacity: 1, transform: 'scale(1)' },
-    delay: 900,
-    config: config.wobbly,
-  });
 
   return (
     <ContactSection id="contact">
-      <ContactContainer style={containerProps}>
-        <Title style={titleProps}>Get In Touch</Title>
+      <ContactContainer
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <Title
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          Get In Touch
+        </Title>
         <ContactForm onSubmit={handleSubmit}>
           <Input
-            style={inputProps}
             type="text"
             name="name"
             placeholder="Your Name"
             value={formData.name}
             onChange={handleChange}
             required
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
           />
           <Input
-            style={inputProps}
             type="email"
             name="email"
             placeholder="Your Email"
             value={formData.email}
             onChange={handleChange}
             required
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
           />
           <TextArea
-            style={inputProps}
             name="message"
             placeholder="Your Message"
             value={formData.message}
             onChange={handleChange}
             required
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
           />
-          <SubmitButton type="submit" style={buttonProps}>
+          <SubmitButton
+            type="submit"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+          >
             Send Message <FaPaperPlane />
           </SubmitButton>
         </ContactForm>
       </ContactContainer>
+      <AnimatePresence>
+        {showToast && (
+          <Toast
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+          >
+            Message sent successfully!
+          </Toast>
+        )}
+      </AnimatePresence>
     </ContactSection>
   );
 };

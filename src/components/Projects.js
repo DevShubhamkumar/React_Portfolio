@@ -1,15 +1,10 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
-import { useSpring, animated, config } from 'react-spring';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaLinkedin } from 'react-icons/fa';
 
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
 const ProjectsSection = styled.section`
-  padding: 8rem 0;
+  padding: 6rem 0;
   background: ${({ theme }) => theme.background};
   position: relative;
   overflow: hidden;
@@ -25,12 +20,16 @@ const Container = styled.div`
   padding: 0 2rem;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 1024px) {
+    margin-left: 0;
+  }
 `;
 
-const SectionTitle = styled.h2`
-  font-size: 3.5rem;
+const SectionTitle = styled(motion.h2)`
+  font-size: 3rem;
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   color: ${({ theme }) => theme.text};
   position: relative;
   z-index: 1;
@@ -41,68 +40,83 @@ const SectionTitle = styled.h2`
   &::after {
     content: '';
     display: block;
-    width: 100px;
-    height: 5px;
+    width: 80px;
+    height: 4px;
     background: linear-gradient(to right, ${({ theme }) => theme.primary}, ${({ theme }) => theme.secondary});
     margin: 1rem auto 0;
     border-radius: 2px;
   }
 
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
 `;
 
-const ProjectCard = styled(animated.div)`
+const ProjectCard = styled(motion.div)`
   background: linear-gradient(135deg, ${({ theme }) => theme.cardBackground}, ${({ theme }) => theme.cardBackgroundLight});
-  border-radius: 20px;
+  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 
   &:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const ProjectImageWrapper = styled.div`
+  flex: 0 0 40%;
+  max-height: 300px;
+  overflow: hidden;
+
+  @media (max-width: 767px) {
+    max-height: 200px;
   }
 `;
 
 const ProjectImage = styled.img`
   width: 100%;
-  height: 400px;
+  height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 
   ${ProjectCard}:hover & {
     transform: scale(1.05);
   }
-
-  @media (max-width: 768px) {
-    height: 250px;
-  }
 `;
 
 const ProjectInfo = styled.div`
+  flex: 1;
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ProjectTitle = styled.h3`
-  font-size: 2.2rem;
+  font-size: 2rem;
   color: ${({ theme }) => theme.text};
   margin-bottom: 1rem;
 
   @media (max-width: 768px) {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 `;
 
 const ProjectDescription = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: ${({ theme }) => theme.textLight};
   line-height: 1.6;
   margin-bottom: 1.5rem;
 
   @media (max-width: 768px) {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 `;
 
@@ -113,7 +127,7 @@ const ProjectFeatures = styled.ul`
 `;
 
 const ProjectFeature = styled.li`
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: ${({ theme }) => theme.text};
   margin-bottom: 0.5rem;
   display: flex;
@@ -122,26 +136,27 @@ const ProjectFeature = styled.li`
   &:before {
     content: '•';
     color: ${({ theme }) => theme.primary};
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin-right: 0.5rem;
   }
 `;
 
 const ProjectLinks = styled.div`
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
+  margin-top: auto;
 `;
 
 const ProjectLink = styled.a`
   display: flex;
   align-items: center;
-  padding: 0.8rem 1.5rem;
+  padding: 0.7rem 1.2rem;
   border-radius: 50px;
   background: linear-gradient(45deg, ${({ theme }) => theme.primary}, ${({ theme }) => theme.secondary});
   color: ${({ theme }) => theme.background};
   font-weight: 600;
+  font-size: 0.9rem;
   text-decoration: none;
   transition: all 0.3s ease;
 
@@ -154,16 +169,16 @@ const ProjectLink = styled.a`
     margin-left: 0.5rem;
   }
 
-  @media (max-width: 768px) {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
+  @media (max-width: 480px) {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
   }
 `;
 
 const project = {
   title: 'Public E-Marketplace',
   description: 'A comprehensive e-commerce platform that connects buyers, sellers, and administrators in a dynamic online marketplace.',
-  image: '/path/to/pem-image.jpg', // Replace with actual image path
+  image: './pem.jpg', // Replace with actual image path
   liveLink: 'https://pem-frontend.vercel.app/',
   githubLink: 'https://github.com/DevShubhamkumar',
   linkedinLink: 'https://www.linkedin.com/in/shubham-kumar-64064828b/',
@@ -178,18 +193,25 @@ const project = {
 };
 
 const Projects = () => {
-  const fadeInProps = useSpring({
-    from: { opacity: 0, transform: 'translateY(30px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
-    config: config.gentle,
-  });
-
   return (
     <ProjectsSection id="projects">
       <Container>
-        <SectionTitle>Featured Project</SectionTitle>
-        <ProjectCard style={fadeInProps}>
-          <ProjectImage src={project.image} alt={project.title} />
+        <SectionTitle
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          Featured Project
+        </SectionTitle>
+        <ProjectCard
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <ProjectImageWrapper>
+            <ProjectImage src={project.image} alt={project.title} />
+          </ProjectImageWrapper>
           <ProjectInfo>
             <ProjectTitle>{project.title}</ProjectTitle>
             <ProjectDescription>{project.description}</ProjectDescription>

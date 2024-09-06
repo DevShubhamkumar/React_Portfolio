@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FaGraduationCap, FaCode, FaLaptopCode, FaGithub } from 'react-icons/fa';
-import { useSpring, animated, config } from 'react-spring';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+
 
 const AboutSection = styled.section`
   background-color: ${({ theme }) => theme.background};
@@ -10,7 +12,8 @@ const AboutSection = styled.section`
 
   @media (min-width: 768px) {
     padding: 6rem 0;
-    margin-left: 250px; // Adjust based on your side navbar width
+     margin-left: 100px;
+
   }
 
   @media (min-width: 1200px) {
@@ -32,7 +35,7 @@ const Container = styled.div`
   }
 `;
 
-const AboutContent = styled.div`
+const AboutContent = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,7 +52,7 @@ const AboutContent = styled.div`
   }
 `;
 
-const AboutText = styled.div`
+const AboutText = styled(motion.div)`
   flex: 1;
 `;
 
@@ -125,7 +128,7 @@ const Highlight = styled.span`
   }
 `;
 
-const AboutImageWrapper = styled.div`
+const AboutImageWrapper = styled(motion.div)`
   width: 280px;
   height: 280px;
   position: relative;
@@ -166,6 +169,7 @@ const AboutImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.3s ease;
 
   &:hover {
@@ -194,7 +198,7 @@ const QualificationsWrapper = styled.div`
   }
 `;
 
-const QualificationItem = styled.div`
+const QualificationItem = styled(motion.div)`
   display: flex;
   align-items: center;
   gap: 0.8rem;
@@ -241,32 +245,33 @@ const QualificationText = styled.span`
     font-size: 1.1rem;
   }
 `;
-
-const AnimatedAboutContent = animated(AboutContent);
-const AnimatedAboutText = animated(AboutText);
-const AnimatedAboutImageWrapper = animated(AboutImageWrapper);
-const AnimatedQualificationItem = animated(QualificationItem);
-
 const About = () => {
-  const contentProps = useSpring({
-    from: { opacity: 0, transform: 'translateY(50px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
-    config: config.molasses,
-  });
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  const textProps = useSpring({
-    from: { opacity: 0, transform: 'translateX(-50px)' },
-    to: { opacity: 1, transform: 'translateX(0)' },
-    delay: 300,
-    config: config.gentle,
-  });
+  const contentVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
 
-  const imageProps = useSpring({
-    from: { opacity: 0, transform: 'scale(0.8) rotate(-10deg)' },
-    to: { opacity: 1, transform: 'scale(1) rotate(0deg)' },
-    delay: 600,
-    config: config.wobbly,
-  });
+  const textVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.3, ease: "easeOut" } }
+  };
+
+  const imageVariants = {
+    hidden: { opacity: 0, scale: 0.8, rotate: -10 },
+    visible: { opacity: 1, scale: 1, rotate: 0, transition: { duration: 0.6, delay: 0.6, ease: "easeOut" } }
+  };
+
+  const qualificationVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: 0.9 + i * 0.1, ease: "easeOut" }
+    })
+  };
 
   const qualifications = [
     { icon: FaGraduationCap, text: "MCA from Jain University" },
@@ -276,10 +281,14 @@ const About = () => {
   ];
 
   return (
-    <AboutSection id="about">
+    <AboutSection id="about" ref={sectionRef}>
       <Container>
-        <AnimatedAboutContent style={contentProps}>
-          <AnimatedAboutText style={textProps}>
+        <AboutContent
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          variants={contentVariants}
+        >
+          <AboutText variants={textVariants}>
             <SectionTitle>About Me</SectionTitle>
             <Paragraph>
               Hello! I'm <Highlight>Shubham</Highlight>, a passionate Full Stack Web Developer with expertise in the <Highlight>MERN stack</Highlight>. 
@@ -292,22 +301,23 @@ const About = () => {
             </Paragraph>
             <QualificationsWrapper>
               {qualifications.map((qual, index) => (
-                <AnimatedQualificationItem 
+                <QualificationItem 
                   key={index} 
-                  style={{opacity: contentProps.opacity, transform: contentProps.transform, delay: 900 + index * 100}}
+                  variants={qualificationVariants}
+                  custom={index}
                 >
                   <QualificationIcon>
                     <qual.icon />
                   </QualificationIcon>
                   <QualificationText>{qual.text}</QualificationText>
-                </AnimatedQualificationItem>
+                </QualificationItem>
               ))}
             </QualificationsWrapper>
-          </AnimatedAboutText>
-          <AnimatedAboutImageWrapper style={imageProps}>
+          </AboutText>
+          <AboutImageWrapper variants={imageVariants}>
             <AboutImage src="/profile.jpg" alt="Shubham Kumar" />
-          </AnimatedAboutImageWrapper>
-        </AnimatedAboutContent>
+          </AboutImageWrapper>
+        </AboutContent>
       </Container>
     </AboutSection>
   );

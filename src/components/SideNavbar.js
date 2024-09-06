@@ -127,9 +127,7 @@ const MenuLine = styled(motion.span)`
   background-color: ${({ theme }) => theme.text};
   position: absolute;
   left: 0;
-`;
-
-const Navbar = ({ toggleTheme, isDarkMode }) => {
+`;const Navbar = ({ toggleTheme, isDarkMode }) => {
   const [activeSection, setActiveSection] = useState('home');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -161,7 +159,11 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
     { to: 'skills', icon: <FaCog /> },
     { to: 'projects', icon: <FaProjectDiagram /> },
     { to: 'contact', icon: <FaEnvelope /> },
-    { to: '/path-to-your-resume.pdf', icon: <FaFileDownload />, external: true },
+    { 
+      to: 'https://drive.google.com/file/d/1Wje2I1x83KyFqcq18pd6IpcunkwyWBtm/view?usp=sharing', 
+      icon: <FaFileDownload />, 
+      external: true 
+    },
   ];
 
   return (

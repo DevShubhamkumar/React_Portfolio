@@ -22,7 +22,7 @@ const HomeSection = styled.section`
   background: ${({ theme }) => theme.background};
   position: relative;
   overflow: hidden;
-  margin-left: 250px;
+  margin-left: 100px;
 
   @media (max-width: 1200px) {
     margin-left: 200px;
@@ -189,7 +189,7 @@ const SocialLink = styled.a`
   }
 `;
 
-const ScrollDownIcon = styled(animated.div)`
+const ScrollDownIcon = styled(animated(Link))`
   position: absolute;
   bottom: 2rem;
   left: 50%;
@@ -207,6 +207,7 @@ const ScrollDownIcon = styled(animated.div)`
     font-size: 1.5rem;
   }
 `;
+
 const Home = () => {
   const [subtitle, setSubtitle] = useState('');
   const fullSubtitle = "Crafting innovative web solutions with the MERN stack. Turning ideas into seamless, scalable applications.";
@@ -300,18 +301,26 @@ const Home = () => {
           </CTAButton>
         </animated.div>
         <SocialLinks style={socialProps}>
-          <SocialLink href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">
+          <SocialLink href="https://github.com/DevShubhamkumar" target="_blank" rel="noopener noreferrer">
             <FaGithub />
           </SocialLink>
-          <SocialLink href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener noreferrer">
+          <SocialLink href="https://www.linkedin.com/in/shubham-kumar-64064828b/" target="_blank" rel="noopener noreferrer">
             <FaLinkedin />
           </SocialLink>
-          <SocialLink href="mailto:your.email@example.com">
+          <SocialLink href="mailto:ashubhammagotra@gmail.com">
             <FaEnvelope />
           </SocialLink>
         </SocialLinks>
       </RightPanel>
-      <ScrollDownIcon style={scrollDownProps}>
+      <ScrollDownIcon 
+        style={scrollDownProps}
+        to="about"
+        smooth={true}
+        duration={500}
+        spy={true}
+        exact="true"
+        offset={-80} // Adjust this value based on your layout
+      >
         <FaArrowDown />
       </ScrollDownIcon>
     </HomeSection>
