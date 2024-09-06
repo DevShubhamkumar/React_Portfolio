@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ThemeProvider, createGlobalStyle } from 'styled-components';
-import Navbar from './components/SideNavbar';
-import Home from './components/Home';
-import About from './components/About';
-import Skills from './components/Skills';
-import Projects from './components/Projects';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { createGlobalStyle } from 'styled-components';
 
-// Global Styles
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
@@ -77,7 +68,8 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-// Theme Definitions
+export default GlobalStyle;
+
 export const mintFreshTheme = {
   name: 'mintFresh',
   background: '#f0fff4',
@@ -167,38 +159,3 @@ export const cleanMinimalistTheme = {
   hoverBackground: '#3a7bc2',
   hoverText: '#ffffff',
 };
-
-const themes = [mintFreshTheme, stylishTheme, sunsetVibesTheme, midnightBlackTheme, cleanMinimalistTheme];
-
-// App Component
-const App = () => {
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? JSON.parse(savedTheme) : cleanMinimalistTheme;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('theme', JSON.stringify(theme));
-  }, [theme]);
-
-  const toggleTheme = () => {
-    const currentIndex = themes.findIndex(t => t.name === theme.name);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    setTheme(themes[nextIndex]);
-  };
-
-  return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      <Navbar toggleTheme={toggleTheme} />
-      <Home />
-      <About />
-      <Skills />
-      <Projects />
-      <Contact />
-      <Footer />
-    </ThemeProvider>
-  );
-};
-
-export default App;
